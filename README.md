@@ -1,40 +1,41 @@
-
-# Architecture
+# Agentic Ad Content Generator with LangGraph
+This repository demonstrates an agentic ad-content generation workflow with LangGraph and LangChain. Generator and critic LLM instances operate as separate nodes in a state-driven graph. The system iteratively generates and evaluates short ad captions based on structured product metadata, using Pydantic-enforced outputs and patch-based state updates to ensure predictability, token efficiency, and controlled iteration. The final output is emitted as a structured JSON artifact (and saved as json file), making the pipeline easy to test, reason about, and extend.
+## Architecture
 The system is implemented using LangGraph with two LLM nodes:
 
-Generator Node – produces ad content based on product metadata and audience.
+* **Generator Node:** Produces ad content based on product metadata and audience.
 
-Critic Node – evaluates the generated content against predefined rules and provides feedback.
+* **Critic Node:** Evaluates the generated content against predefined rules and provides feedback.
 
 There are no tool nodes or external tool invocations in this workflow. All reasoning and iteration happen within the agent graph itself.
 
 LangGraph was chosen because it provides explicit, controllable state transitions, making iterative generation loops (generate → critique → regenerate) easier to reason about and safer to manage compared to ad-hoc prompt chaining.
 ![Graph Structure](images/Graph_Structure.png)
-# How to run?
+## How to run?
 The project supports both local execution (virtual environment) and Docker-based execution. All common commands are wrapped in a Makefile.
-## Environment setup
+### Environment setup
 
 The OpenAI API key is loaded from a .env file.
 
 .env: 
 OPENAI_API_KEY=your_api_key_here
 
-## Run Locally
+### Run Locally
 
-make venv         # Create virtual environment
-make install      # Install requirements
-make test-local   # Run unit and integration tests
-make run-local    # Run the ad agents
-make clean-venv:  # Remove the environment
+- make venv         # Create virtual environment
+- make install      # Install requirements
+- make test-local   # Run unit and integration tests
+- make run-local    # Run the ad agents
+- make clean-venv:  # Remove the environment
 
-## Run with Docker
+### Run with Docker
 
-make build          # build Docker image
-make run            # run the agent in a container
-make test           # run all tests in Docker
-make down           # stop container and remove image
+- make build          # build Docker image
+- make run            # run the agent in a container
+- make test           # run all tests in Docker
+- make down           # stop container and remove image
 
-# How did I use AI asisstants?
+## How did I use AI asisstants?
 
 I implemented the core codebase and overall architecture manually. I used AI assistants selectively, mainly for:
 
@@ -57,7 +58,7 @@ Here are some sample prompts I used:
 ![Prompt 4](images/prompt4.png)
 ![Prompt 5](images/prompt5.png)
 
-# Structured Output Enforcement
+## Structured Output Enforcement
 
 All LLM outputs in this project are strictly structured using Pydantic models. Each LangGraph node enforces a schema via with_structured_output(...), ensuring predictable, validated outputs.
 ```python 
@@ -70,7 +71,7 @@ self.critic_llm = ChatOpenAI(
 ).with_structured_output(CriticResult)
 ```
 
-# Patch-based State Updates (Token-Efficient Design)
+## Patch-based State Updates (Token-Efficient Design)
 
 Rather than passing the entire state or full Pydantic models between nodes, each LangGraph node returns a patch (a partial state update). LangGraph then merges these patches into the global state using field-level reducers.
 ```python
@@ -82,7 +83,7 @@ return {
 ```
 This approach is intentional. Passing full Pydantic models or accumulated message histories between nodes can quickly inflate the prompt size, leading to unnecessary token consumption and, in extreme cases, context-length errors. 
 
-# Sample Inputs
+## Sample Inputs
 
 The file 'sample_inputs.txt' contains example inputs in the format:
 
