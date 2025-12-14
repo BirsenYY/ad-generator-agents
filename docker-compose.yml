@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  ad-creator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cape-io-ad-creator
+    working_dir: /app
+    environment:
+      - OPEN_API_KEY=${OPEN_API_KEY}
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+      - ./output:/app/output
+    stdin_open: true
+    tty: true

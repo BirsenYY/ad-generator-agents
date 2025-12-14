@@ -1,0 +1,6 @@
+openai
+python-dotenv
+langgraph
+langchain
+langchain_openai
+pytest

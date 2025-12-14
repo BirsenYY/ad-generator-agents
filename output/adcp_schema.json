@@ -1,0 +1,13 @@
+{
+  "adcp_version": "1.0",
+  "task": "Creative Generation",
+  "generation_asset": {
+    "type": "text_ad",
+    "content": "Fairy Liquid 🧼 Perfect for your kitchen cleaning needs!",
+    "content_metadata": {
+      "length": 42,
+      "sentiment": "energetic"
+    },
+    "brand_safety_check": "passed"
+  }
+}
