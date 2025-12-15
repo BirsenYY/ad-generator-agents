@@ -96,3 +96,14 @@ The file 'sample_inputs.txt' contains example inputs in the format:
 Example:
 
 Cadbury Dairy Milk, milk chocolate bar, Adults
+
+## Trade-offs and Challenges
+
+- In each agent framework run, only one product information is given and one ad text is generated. Batch processing is not included. The reason is that I prefereded to spend my limited available time on structured output enforcement.
+
+- I could have implemented the workflow wihtout using LangGraph (via only functions with LLM connections and loops). Introducing LangGraph added more overhead, but it made schema enforcement and execution traceability significantly easier. In particular, I found the GraphState abstraction in LangGraph very intuitive for managing state across iterations. I chose LangGraph over other frameworks (e.g. AutoGen) because I had prior experience. Considering the limited available time, I preferred not to introduce the learning curve of a new tool. With more time, I would explore how other frameworks approach schema enforcement and state management.
+
+- There is no agent evaluation implementation in this project. In a production-grade system, systematic agent evaluation is essential. My primary focus here was on schema enforcement and generating ad content that complies with predefined rules. For that reason, I intentionally didn't apply agent evaluation.
+
+- The most challenging part was ensuring each LLM instance produces a valid Pydantic model rather than a string and what information to pass between nodes to prevent excessive token consumption. 
+ 
