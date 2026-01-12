@@ -12,9 +12,9 @@ def test_openai_api_connection(caplog):
     """Test that we can connect to OpenAI and get a structured response."""
     caplog.set_level(logging.INFO) 
     load_dotenv()
-    api_key = os.getenv("OPEN_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
-        pytest.skip("OPEN_API_KEY not set; skipping integration test")
+        pytest.skip("OPENAI_API_KEY not set; skipping integration test")
     
     llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=api_key)
     

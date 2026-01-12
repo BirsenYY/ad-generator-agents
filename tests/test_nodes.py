@@ -21,7 +21,7 @@ def sample_product_metadata():
 @pytest.fixture
 def empty_state(sample_product_metadata):
     # messages can be an empty list; nodes will append SystemMessage/AIMessage
-    return GraphState(messages=[], product_metadata=sample_product_metadata)
+    return GraphState(messages=[], product_metadata=sample_product_metadata, iteration=0)
 
 
 def make_fake_asset():
