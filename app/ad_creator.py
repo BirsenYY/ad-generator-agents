@@ -51,45 +51,41 @@ class AdCreatorAgents:
         """Evaulate the latest generated content for a given target audience and product name."""
         
         generated_ad = state.generation_asset.content
-        words = generated_ad.split(" ")
-        critic_result = CriticResult(feedback="", accepted = False)
-        
-        if len(words) > 15:
-           critic_result.feedback = "Word count is more than 15."
-           
+        word_count = len(generated_ad.split())
+        emoji_count = len(emoji.emoji_list(generated_ad))
 
-        elif len(emoji.emoji_list(generated_ad)) != 2:
-            critic_result.feedback = "Emoji count is not 1."
-            
+        critic_result = CriticResult(feedback="", accepted=False)
 
-        elif  len(words) > 15 and len(emoji.emoji_list(generated_ad)) != 2:
-            critic_result.feedback = "Word count is more than 15. Emoji count is not 1."
-            
-        
+        errors = []
+        if word_count > 15:
+            errors.append("Word count is more than 15.")
+        if emoji_count != 1:
+            errors.append("Emoji count is not 1.")
+
+        if errors:
+            critic_result.feedback = " ".join(errors)
         else:
-            system_prompt = utils.CRITICS_PROMPT + f"Generated content: {state.generation_asset.content}"    #Deterministically generate emoji count.
+            system_prompt = (utils.CRITICS_PROMPT+ f"Generated content: {generated_ad}")
             critic_result = self.critic_llm.invoke(system_prompt)
-        
+
         print(f"Accepted: {critic_result.accepted}")
-        if  not critic_result.accepted:
+        if not critic_result.accepted:
             print(f"Feedback: {critic_result.feedback}")
+            state.iteration += 1
+
         return {
             "messages": [AIMessage(content=f"accepted={critic_result.accepted}\nfeedback={critic_result.feedback}")],
-            "critic_result": critic_result
+            "critic_result": critic_result,
+            "iteration": state.iteration
         }
 
         
     def should_continue(self, state: GraphState) -> Literal["generator_node", END]:
         """Decide if we should continue the loop or stop based upon whether the LLM made a tool call"""
         critic_result = state.critic_result
-        print(critic_result.accepted)
-        print(state.iteration)
-        if state.iteration < utils.MAX_ITER:
-            if not critic_result.accepted: #Condition added to prevent infinite loop of rejection-generation.
-               state.iteration = state.iteration + 1
-               return "generator_node"
-        else:
-            return END
+
+        return "generator_node" if state.iteration < utils.MAX_ITER and not critic_result.accepted else END
+
             
     def run_agents(self, product_metadata):
 

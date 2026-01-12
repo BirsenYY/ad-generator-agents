@@ -3,10 +3,10 @@
   "task": "Creative Generation",
   "generation_asset": {
     "type": "text_ad",
-    "content": "Get laundry done right with Persil! 🌟",
+    "content": "Snack time with Walkers Crisps! 🥔 Crunch your way to family fun!",
     "content_metadata": {
-      "length": 37,
-      "sentiment": "energetic"
+      "length": 64,
+      "sentiment": "playful"
     },
     "brand_safety_check": "passed"
   }
