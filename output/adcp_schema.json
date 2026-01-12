@@ -3,10 +3,10 @@
   "task": "Creative Generation",
   "generation_asset": {
     "type": "text_ad",
-    "content": "Get creative with Apple iPad 🍏!",
+    "content": "Explore new ideas with the Apple iPad! 🍏",
     "content_metadata": {
-      "length": 31,
-      "sentiment": "playful"
+      "length": 40,
+      "sentiment": "energetic"
     },
     "brand_safety_check": "passed"
   }
