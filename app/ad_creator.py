@@ -52,10 +52,23 @@ class AdCreatorAgents:
         
         generated_ad = state.generation_asset.content
         words = generated_ad.split(" ")
-        system_prompt = utils.CRITICS_PROMPT + f"""Generated content: {state.generation_asset.content}, 
-                                                   word count of the ad text: {len(words)},
-                                                   emoji count:{len(emoji.emoji_list(generated_ad))}     """#Deterministically generate emoji count.
-        critic_result = self.critic_llm.invoke(system_prompt)
+        critic_result = CriticResult(feedback="", accepted = False)
+        
+        if len(words) > 15:
+           critic_result.feedback = "Word count is more than 15."
+           
+
+        elif len(emoji.emoji_list(generated_ad)) != 2:
+            critic_result.feedback = "Emoji count is not 1."
+            
+
+        elif  len(words) > 15 and len(emoji.emoji_list(generated_ad)) != 2:
+            critic_result.feedback = "Word count is more than 15. Emoji count is not 1."
+            
+        
+        else:
+            system_prompt = utils.CRITICS_PROMPT + f"Generated content: {state.generation_asset.content}"    #Deterministically generate emoji count.
+            critic_result = self.critic_llm.invoke(system_prompt)
         
         print(f"Accepted: {critic_result.accepted}")
         if  not critic_result.accepted:
@@ -69,10 +82,12 @@ class AdCreatorAgents:
     def should_continue(self, state: GraphState) -> Literal["generator_node", END]:
         """Decide if we should continue the loop or stop based upon whether the LLM made a tool call"""
         critic_result = state.critic_result
-        
-        if state.iteration < utils.MAX_ITER and not critic_result.accepted: #Condition added to prevent infinite loop of rejection-generation.
-            state.iteration += 1
-            return "generator_node"
+        print(critic_result.accepted)
+        print(state.iteration)
+        if state.iteration < utils.MAX_ITER:
+            if not critic_result.accepted: #Condition added to prevent infinite loop of rejection-generation.
+               state.iteration = state.iteration + 1
+               return "generator_node"
         else:
             return END
             

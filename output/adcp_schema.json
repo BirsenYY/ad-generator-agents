@@ -3,9 +3,9 @@
   "task": "Creative Generation",
   "generation_asset": {
     "type": "text_ad",
-    "content": "Explore new ideas with the Apple iPad! 🍏",
+    "content": "Get laundry done right with Persil! 🌟",
     "content_metadata": {
-      "length": 40,
+      "length": 37,
       "sentiment": "energetic"
     },
     "brand_safety_check": "passed"
