@@ -33,6 +33,7 @@ class ADCPSchema(BaseModel):
     
 class GraphState(BaseModel):
     messages: Annotated[list[AnyMessage], add_messages]
+    iteration:int
     product_metadata: ProductMetadata
     generation_asset: Optional[GenerationAsset] = None
     critic_result: Optional[CriticResult] = None

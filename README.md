@@ -107,3 +107,8 @@ Cadbury Dairy Milk, milk chocolate bar, Adults
 
 - The most challenging part was ensuring each LLM instance produces a valid Pydantic model rather than a string and what information to pass between nodes to prevent excessive token consumption. 
  
+
+ ## Updates
+- Deterministically define content length and emoji count.
+- Introduce MAX_ITER and track iteration as a state variable to prevent infinite loops.
+- Eliminate inconsistencies between Critic and Generator system prompts.    

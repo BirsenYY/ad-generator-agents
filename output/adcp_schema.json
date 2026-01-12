@@ -3,9 +3,9 @@
   "task": "Creative Generation",
   "generation_asset": {
     "type": "text_ad",
-    "content": "Fairy Liquid 🧼 Perfect for your kitchen cleaning needs!",
+    "content": "Experience effortless cleaning with the Dyson V8 cordless vacuum! 🚀",
     "content_metadata": {
-      "length": 42,
+      "length": 67,
       "sentiment": "energetic"
     },
     "brand_safety_check": "passed"

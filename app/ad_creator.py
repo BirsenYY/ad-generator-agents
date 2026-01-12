@@ -8,13 +8,14 @@ from . import utils
 from .models import GraphState, CriticResult, GenerationAsset, ProductMetadata, ADCPSchema
 from pathlib import Path
 import os
+import emoji
 from dotenv import load_dotenv
 
 
 class AdCreatorAgents:
     def __init__(self):
         load_dotenv()
-        OPEN_API_KEY = os.getenv("OPEN_API_KEY")
+        OPEN_API_KEY = os.getenv("OPENAI_API_KEY")
         self.graph = StateGraph(GraphState)
         self.graph.add_node(self.generator_node)
         self.graph.add_node(self.critic_node)
@@ -37,20 +38,23 @@ class AdCreatorAgents:
                                  You generated before and received the following feedback: {state.critic_result.feedback}"""
         
         generation_asset = self.generator_llm.invoke(system_prompt)
-        
+        #Deterministically generate content length.
+        generation_asset.content_metadata.length = len(generation_asset.content)
         print(f"Generated content: {generation_asset.content}")
         return {
             "messages": [AIMessage(content=generation_asset.content)],
             "generation_asset": generation_asset
         }
- 
+    
     def critic_node(self, state: GraphState):
 
         """Evaulate the latest generated content for a given target audience and product name."""
         print(f"Generated content in critic node: {state.generation_asset.content}")
         generated_ad = state.generation_asset.content
         words = generated_ad.split(" ")
-        system_prompt = utils.CRITICS_PROMPT + f"Generated content: {state.generation_asset.content}, word count of the ad text: {len(words)}" 
+        system_prompt = utils.CRITICS_PROMPT + f"""Generated content: {state.generation_asset.content}, 
+                                                   word count of the ad text: {len(words)},
+                                                   emoji count:{len(emoji.emoji_list(generated_ad))}     """#Deterministically generate emoji count.
         critic_result = self.critic_llm.invoke(system_prompt)
         print(f"Feedback: {critic_result.feedback}")
         print(f"Accepted: {critic_result.accepted}")
@@ -64,7 +68,8 @@ class AdCreatorAgents:
         """Decide if we should continue the loop or stop based upon whether the LLM made a tool call"""
         critic_result = state.critic_result
         
-        if not critic_result.accepted:
+        if state.iteration < utils.MAX_ITER and not critic_result.accepted: #Condition added to prevent infinite loop of rejection-generation.
+            state.iteration += 1
             return "generator_node"
         else:
             return END
@@ -73,6 +78,7 @@ class AdCreatorAgents:
 
         initial_state = GraphState(
             messages=[],
+            iteration=0,
             product_metadata=product_metadata
         )
         result = self.graph.invoke(initial_state)

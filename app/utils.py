@@ -1,6 +1,6 @@
 #System prompts for generation and critic LLM instances
 
-AD_GENERATION_PROMPT = """You are a professional ad copy generator. Your task is to create a single compelling, short caption that promotes the given product for the specified target audience.
+AD_GENERATION_PROMPT = """You are a professional ad generator. Your task is to create a single compelling, short caption that promotes the given product for the specified target audience.
 
 **CRITICAL RULES (ALL MUST BE SATISFIED):**
 
@@ -9,7 +9,6 @@ AD_GENERATION_PROMPT = """You are a professional ad copy generator. Your task is
 3. **Safety & Compliance**: NO health, medical, wellness, or regulated-product claims. Avoid words like "cure," "prevent," "treat," "improve health," "medical benefit," etc.
 4. **Accuracy**: Do NOT make unverifiable claims, guarantees, prices, legal promises, or exaggerated factual statements.
 5. **Tone**: Keep the caption promotional, concise, energetic, and suitable as a standalone ad (NO multi-sentence explanations).
-6. **Relevance**: Caption must clearly reference the product name or its primary benefit for the target audience.
 
 **OUTPUT FORMAT (REQUIRED JSON STRUCTURE):**
 
@@ -20,7 +19,7 @@ You MUST output ONLY valid JSON in this exact format, with no additional text, e
   "type": "text_ad",
   "content": "<your generated caption here>",
   "content_metadata": {
-    "length": <integer: character count of the caption>,
+    "length": <integer: character count of the caption, set this as 0 >,
     "sentiment": "< neutral | playful | friendly | energetic | calm >"
   },
   "brand_safety_check": "passed"
@@ -33,17 +32,17 @@ You MUST output ONLY valid JSON in this exact format, with no additional text, e
   "type": "text_ad",
   "content": "Neon Energy Drink ⚡ Level up your game!",
   "content_metadata": {
-    "length": 39,
+    "length": 0,
     "sentiment": "positive"
   },
   "brand_safety_check": "passed"
 }
 
 **INSTRUCTIONS:**
-1. Generate a caption that obeys all 6 rules above.
-2. Count the character length of ONLY the content field.
-3. Classify sentiment as "positive," "neutral," or "mixed" based on the caption's emotional tone.
-4. Always set brand_safety_check to "passed" if the caption meets all rules; if unsure, regenerate until it does.
+1. Generate a caption that obeys all 5 rules above.
+2. Write 0 for length in content_metadata. Later, the length of the content will be counted deterministicly. 
+3. Classify sentiment as neutral | playful | friendly | energetic | calm .
+4. Set brand_safety_check to "passed" if the caption meets Safety & Compliance; otherwise set it to "failed".
 5. Output ONLY the JSON object—no explanation, no preamble, no trailing text.
 
 The product name and target audience are as follow: 
@@ -53,11 +52,11 @@ CRITICS_PROMPT = """You are a strict ad compliance critic. Evaluate the most rec
 
 **RULES TO ENFORCE (ALL MUST PASS):**
 
-1. **Length**: Caption must be 15 words or fewer (count words by spaces).
-2. **Emoji**: Must contain at least one emoji character.
-3. **Safety & Compliance**: NO health claims, medical language (cure, prevent, treat, manage), wellness promises, or regulated-product claims.
-4. **Accuracy & Legality**: NO unverifiable factual claims, price statements, guaranteed outcomes, or legal promises.
-5. **Tone & Format**: Caption must be promotional, concise, single-line, and suitable for display (NO multi-sentence explanations or filler).
+1. **Length**: The generated ad content must be 15 words or fewer (count words by spaces).
+2. **Emoji**: Must include exactly one emoji character (for visual appeal and engagement).
+3. **Safety & Compliance**: NO health, medical, wellness, or regulated-product claims. Avoid words like "cure," "prevent," "treat," "improve health," "medical benefit," etc.
+4. **Accuracy**: Do NOT make unverifiable claims, guarantees, prices, legal promises, or exaggerated factual statements.
+5. **Tone**: Keep the caption promotional, concise, energetic, and suitable as a standalone ad (NO multi-sentence explanations).
 
 **OUTPUT FORMAT (REQUIRED JSON STRUCTURE):**
 
@@ -100,3 +99,4 @@ The generated content and its details are as follow:
 
 ADCP_VERSION = "1.0"
 TASK = "Creative Generation"
+MAX_ITER = 5
