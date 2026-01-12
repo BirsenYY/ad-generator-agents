@@ -49,15 +49,17 @@ class AdCreatorAgents:
     def critic_node(self, state: GraphState):
 
         """Evaulate the latest generated content for a given target audience and product name."""
-        print(f"Generated content in critic node: {state.generation_asset.content}")
+        
         generated_ad = state.generation_asset.content
         words = generated_ad.split(" ")
         system_prompt = utils.CRITICS_PROMPT + f"""Generated content: {state.generation_asset.content}, 
                                                    word count of the ad text: {len(words)},
                                                    emoji count:{len(emoji.emoji_list(generated_ad))}     """#Deterministically generate emoji count.
         critic_result = self.critic_llm.invoke(system_prompt)
-        print(f"Feedback: {critic_result.feedback}")
+        
         print(f"Accepted: {critic_result.accepted}")
+        if  not critic_result.accepted:
+            print(f"Feedback: {critic_result.feedback}")
         return {
             "messages": [AIMessage(content=f"accepted={critic_result.accepted}\nfeedback={critic_result.feedback}")],
             "critic_result": critic_result

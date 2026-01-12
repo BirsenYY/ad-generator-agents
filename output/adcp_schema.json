@@ -3,10 +3,10 @@
   "task": "Creative Generation",
   "generation_asset": {
     "type": "text_ad",
-    "content": "Experience effortless cleaning with the Dyson V8 cordless vacuum! 🚀",
+    "content": "Get creative with Apple iPad 🍏!",
     "content_metadata": {
-      "length": 67,
-      "sentiment": "energetic"
+      "length": 31,
+      "sentiment": "playful"
     },
     "brand_safety_check": "passed"
   }
