@@ -109,8 +109,8 @@ Cadbury Dairy Milk, milk chocolate bar, Adults
  
 
  ## Updates
-- Deterministically define content length and emoji count.
+- Deterministically generate the content length (character count) and emoji count.
 - Introduce MAX_ITER and track iteration as a state variable to prevent infinite loops.
 - Eliminate inconsistencies between Critic and Generator system prompts.  
 - Tidy up terminal print statements.
-- Rename OPEN_API_KEY to OPENAI_API_KEY".   
+- Rename OPEN_API_KEY to OPENAI_API_KEY.   
